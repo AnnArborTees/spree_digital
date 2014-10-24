@@ -3,7 +3,7 @@ module Spree
     belongs_to :variant
     has_many :digital_links, :dependent => :destroy
 
-    has_attached_file :attachment, path: get_path
+    has_attached_file :attachment, path: Spree::Digital.get_path
     validates_attachment_content_type :attachment, :content_type => %w(audio/mpeg application/x-mobipocket-ebook
                                                                       application/epub+zip application/octet-stream
                                                                       application/pdf application/zip image/gif
@@ -14,9 +14,7 @@ module Spree
       attachment_definitions[:attachment][:s3_headers] = { :content_disposition => 'attachment' }
     end
 
-    private
-
-    def get_path
+    def self.get_path
       return '/spree/private/digitals/:id/:basename.:extension' if Paperclip::Attachment.default_options[:storage] == :s3
       return ':rails_root/private/digitals/:id/:basename.:extension'
     end
