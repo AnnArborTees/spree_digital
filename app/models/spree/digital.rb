@@ -3,7 +3,7 @@ module Spree
     belongs_to :variant
     has_many :digital_links, :dependent => :destroy
 
-    has_attached_file :attachment, :path => :get_path
+    has_attached_file :attachment, path: get_path
     validates_attachment_content_type :attachment, :content_type => %w(audio/mpeg application/x-mobipocket-ebook
                                                                       application/epub+zip application/octet-stream
                                                                       application/pdf application/zip image/gif
