@@ -1,15 +1,15 @@
 module Spree
   class DigitalLink < ActiveRecord::Base
-    
+
     belongs_to :digital
     validates :digital, :presence => true
 
     belongs_to :line_item
-    
+
     validates_length_of :secret, :is => 30
-    
+
     before_validation :set_defaults, :on => :create
-    
+
     # Can this link stil be used? It is valid if it's less than 24 hours old and was not accessed more than 3 times
     def authorizable?
       !(expired? || access_limit_exceeded?)
@@ -21,6 +21,10 @@ module Spree
 
     def access_limit_exceeded?
       self.access_counter >= Spree::DigitalConfiguration[:authorized_clicks]
+    end
+
+    def clicks_remaining
+      Spree::DigitalConfiguration[:authorized_clicks] - self.access_counter
     end
 
     # This method should be called when a download is initiated.
@@ -35,7 +39,7 @@ module Spree
     end
 
     private
-    
+
     # Populating the secret automatically and zero'ing the access_counter (otherwise it might turn out to be NULL)
     def set_defaults
       self.secret = SecureRandom.hex(15)

@@ -1,0 +1,10 @@
+<!-- insert_bottom ".stock-item .item-name" -->
+<% if can?(:update, @order) && item.line_item.digital? %>
+  <% item.line_item.digital_links.each do |link| %>
+  <li>
+    <%= link_to raw(link.digital.attachment_file_name), digital_url(:host => Spree::Config.get(:site_url), :secret => link.secret) %> (<%= link.clicks_remaining %> Clicks Left)
+  </li>
+  <% end %>
+<% end %>
+
+<!-- enabled -->
