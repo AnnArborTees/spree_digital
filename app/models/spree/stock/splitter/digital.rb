@@ -2,19 +2,22 @@ module Spree
   module Stock
     module Splitter
       class Digital < Base
+
         def split(packages)
           split_packages = []
           packages.each do |package|
             split_packages += split_by_digital(package)
           end
+          byebug
           return_next split_packages
         end
 
         private
+
         def split_by_digital(package)
           digitals = Hash.new { |hash, key| hash[key] = [] }
           package.contents.each do |item|
-            digitals[item.variant.digital?] << item
+            digitals[(item.variant.digital? && (item.variant.weight == 0.0))] << item
           end
           hash_to_packages(digitals)
         end
