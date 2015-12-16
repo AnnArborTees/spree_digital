@@ -8,7 +8,6 @@ module Spree
           packages.each do |package|
             split_packages += split_by_digital(package)
           end
-          byebug
           return_next split_packages
         end
 
