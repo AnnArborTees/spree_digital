@@ -20,7 +20,7 @@ describe Spree::Admin::OrdersController do
       it 'should reset digitals for an order' do
         order.should_receive(:reset_digital_links!)
         spree_get :reset_digitals, id: order.number
-        response.should redirect_to(spree.admin_order_path(order))
+        response.should redirect_to(spree.edit_admin_order_path(order))
       end
     end
   end
