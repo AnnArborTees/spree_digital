@@ -2,12 +2,17 @@
   <%= form_for(:digital, :url => admin_product_digitals_path(@product), :method => :create, :multipart => true ) do |f| %>
     <fieldset>
       <legend><%= Spree::Variant.model_name.human %> "<%= variant.is_master ? "Master" : variant.options_text %>"</legend>
+
+      <div>
+        VHX Product ID: <%= editable variant, :vhx_product_id, url: admin_product_variant_path(@product.slug, variant.id), nid: @product.slug %>
+      </div>
+
       <strong><%= Spree.t(:files, scope: 'digitals') %>:</strong>
       <% if variant.digital? %>
         <ul>
           <% variant.digitals.each do |digital| %>
             <li>
-              <%= render digital %>&nbsp;&nbsp;
+              <%= render 'spree/admin/digitals/digital', digital: digital %>&nbsp;&nbsp;
               <%= link_to Spree.t(:delete_file, scope: 'digitals'), admin_product_digital_url(@product, digital), data: {confirm: Spree.t(:delete_file_confirmation, scope: 'digitals', filename: digital.attachment_file_name)}, method: :delete %>
             </li>
           <% end %>

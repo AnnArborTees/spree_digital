@@ -10,5 +10,9 @@ module Spree
       attachment_definitions[:attachment][:s3_permissions] = :private
       attachment_definitions[:attachment][:s3_headers] = { :content_disposition => 'attachment' }
     end
+
+    def self.vhx_href(record_type, id)
+      "https://api.vhx.tv/#{record_type}/#{id}"
+    end
   end
 end

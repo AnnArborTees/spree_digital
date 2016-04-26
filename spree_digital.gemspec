@@ -17,6 +17,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_backend'
   s.add_dependency 'spree_core', '~> 2.2.0'
   s.add_dependency 'spree_frontend'
+  s.add_dependency 'vhx-ruby'
+  s.add_dependency 'jquery-ui-rails'
+  s.add_dependency 'x-editable-rails'
 
   # test suite
   s.add_development_dependency 'shoulda-matchers'

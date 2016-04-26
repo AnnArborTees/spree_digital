@@ -6,7 +6,20 @@ Spree::Variant.class_eval do
   def digital?
     digitals.present?
   end
-  
+
+  def edit_vhx_product_url
+    return if vhx_product_id.blank?
+    "https://annarborteesonlinestore.vhx.tv/admin/products/#{vhx_product_id}/edit"
+  end
+
+  def vhx_product_id=(value)
+    if value && /\/products\/(?<actual_id>\d+)/ =~ value
+      super(actual_id)
+    else
+      super
+    end
+  end
+
   private
   
   # :dependent => :destroy needs to be handled manually

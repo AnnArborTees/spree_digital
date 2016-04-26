@@ -20,5 +20,16 @@ describe Spree::Digital do
       }.should change(Spree::DigitalLink, :count).by(-3)
     end
   end
+
+  context "Spree::Variant#vhx_product_id=" do
+    context 'given a full url' do
+      let(:variant) { create(:variant) }
+
+      it 'parses the ID from the URL' do
+        variant.vhx_product_id = "https://annarborteesonlinestore.vhx.tv/admin/products/15940/edit"
+        expect(variant.vhx_product_id).to eq '15940'
+      end
+    end
+  end
 end
 
