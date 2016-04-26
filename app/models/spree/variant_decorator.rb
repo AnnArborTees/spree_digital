@@ -4,7 +4,7 @@ Spree::Variant.class_eval do
   
   # Is this variant to be downloaded by the customer?
   def digital?
-    digitals.present?
+    digitals.present? || vhx_product_id.present?
   end
 
   def edit_vhx_product_url

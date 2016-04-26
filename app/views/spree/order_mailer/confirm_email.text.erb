@@ -33,6 +33,9 @@ ATTENTION! Each link will only work a SINGLE TIME!
       <%= raw(link.digital.attachment_file_name) rescue '---' %> <%= digital_url :host => Spree::Config.get(:site_url), :secret => link.secret %>
     <% end %>
   <% end %>
+  <% if stream_link = item.stream_link %>
+    (stream) <%= stream_link %>
+  <% end %>
 <% end %>
 ============================================================
 <% end %>

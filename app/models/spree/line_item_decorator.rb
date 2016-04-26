@@ -1,10 +1,28 @@
 Spree::LineItem.class_eval do
+  include Spree::VhxIntegration
   
   has_many :digital_links, :dependent => :destroy
   after_save :create_digital_links, :if => :digital?
   
   def digital?
     variant.digital?
+  end
+
+  def stream_link
+    return unless order.complete?
+    return if variant.vhx_product_id.blank?
+
+    vhx(product.vhx_api_key) do |v|
+      customers = Vhx::Customer.all(email: order.email, product: v.href(:products, variant.vhx_product_id))
+      products  = customers.flat_map { |c| c.try(:products) || Vhx::Customer.retrieve(v.href :customers, c.id).try(:products) || [] }
+      product   = products.find { |p| p.id.to_i == variant.vhx_product_id.to_i }
+
+      product.links.product_page if product
+    end
+
+  rescue StandardError => e
+    Rails.logger.error "ERROR DURING STREAM LINK RETRIEVAL: #{e} #{message}\n#{e.backtrace.join("\n")}"
+    nil
   end
   
   private

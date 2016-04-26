@@ -1,4 +1,7 @@
 Spree::Order.class_eval do
+  include Spree::VhxIntegration
+  state_machine.after_transition to: :complete, do: :create_vhx_customer
+
   # all products are digital
   def digital?
     line_items.all? { |item| item.digital? }
@@ -22,4 +25,28 @@ Spree::Order.class_eval do
     end
   end
 
+  def create_vhx_customer
+    line_items.each do |line_item|
+      next if line_item.variant.vhx_product_id.blank?
+
+      vhx do |v|
+        if user.present? && user.vhx_customer_id.present?
+          customer = Vhx::Customer.retrieve(v.href(:customers, user.vhx_customer_id))
+        end
+
+        product_href = v.href(:products, line_item.variant.vhx_product_id)
+
+        if customer.nil?
+          customer = Vhx::Customer.create(
+            name:    "#{billing_address.firstname} #{billing_address.lastname}",
+            email:   email,
+            product: product_href
+          )
+          user.update_column :vhx_customer_id, customer.id if user.present?
+        else
+          customer.add_product(product_href)
+        end
+      end
+    end
+  end
 end
