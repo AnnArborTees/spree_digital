@@ -1,3 +1,5 @@
+require 'x-editable-rails'
+
 module Spree
   module Admin
     class DigitalsController < ResourceController
