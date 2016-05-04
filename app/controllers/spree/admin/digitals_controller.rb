@@ -4,6 +4,7 @@ module Spree
       belongs_to "spree/product", :find_by => :slug
 
       helper_method :xeditable?
+      helper X::Editable::Rails::ViewHelpers
 
       def create
          invoke_callbacks(:create, :before)
