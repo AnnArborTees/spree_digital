@@ -29,7 +29,7 @@ Spree::Order.class_eval do
     line_items.each do |line_item|
       next if line_item.variant.vhx_product_id.blank?
 
-      vhx do |v|
+      vhx(line_item.product.vhx_api_key) do |v|
         if user.present? && user.vhx_customer_id.present?
           customer = Vhx::Customer.retrieve(v.href(:customers, user.vhx_customer_id))
         end
