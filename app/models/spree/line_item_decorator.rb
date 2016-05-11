@@ -21,7 +21,7 @@ Spree::LineItem.class_eval do
     end
 
   rescue StandardError => e
-    Rails.logger.error "ERROR DURING STREAM LINK RETRIEVAL: #{e} #{message}\n#{e.backtrace.join("\n")}"
+    Rails.logger.error "ERROR DURING STREAM LINK RETRIEVAL: #{e} #{e.message}\n#{e.backtrace.join("\n")}"
     nil
   end
   
