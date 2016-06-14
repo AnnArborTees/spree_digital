@@ -2,6 +2,7 @@
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => "Digital Versions"} %>
 
 <% if @product.has_variants? %>
+  <%= link_to "Notify existing orders of Digital Download Availability", notify_orders_admin_product_digitals_path(@product.slug), title: "Sends an email including digital download links to all orders of this product.", method: :post, data: { confirm: "Send an email to every past order including this product?" }, class: 'button' %>
 
   <% for variant in @product.variants_including_master do %>
     <%= render 'form', :variant => variant %>

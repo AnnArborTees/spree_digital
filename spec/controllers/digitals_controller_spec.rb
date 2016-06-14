@@ -40,4 +40,11 @@ describe Spree::DigitalsController do
       spree_get :show, secret: authorized_digital_link.secret
     end
   end
+
+  context 'POST #notify_orders' do
+    it 'calls Spree::OrderMailer.digital_downloads_ready on each order' do
+      # TODO ugh factories
+      expect(Spree::OrderMailer).to receive(:digital_downloads_ready).exactly(3).times
+    end
+  end
 end

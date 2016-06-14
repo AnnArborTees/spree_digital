@@ -1,7 +1,11 @@
 Spree::Core::Engine.routes.draw do
   namespace :admin do
     resources :products do
-      resources :digitals
+      resources :digitals do
+        collection do
+          post :notify_orders
+        end
+      end
     end
 
     resources :orders do

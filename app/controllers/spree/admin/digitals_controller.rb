@@ -9,20 +9,45 @@ module Spree
       helper X::Editable::Rails::ViewHelpers
 
       def create
-         invoke_callbacks(:create, :before)
-         @object.attributes = permitted_resource_params
-         if @object.save
-           invoke_callbacks(:create, :after)
-           flash[:success] = flash_message_for(@object, :successfully_created)
-           respond_with(@object) do |format|
-             format.html { redirect_to location_after_save }
-             format.js   { render :layout => false }
-           end
-         else
-           invoke_callbacks(:create, :fails)
-           redirect_to location_after_save
-         end
-       end
+        invoke_callbacks(:create, :before)
+        @object.attributes = permitted_resource_params
+        if @object.save
+          invoke_callbacks(:create, :after)
+          flash[:success] = flash_message_for(@object, :successfully_created)
+          respond_with(@object) do |format|
+            format.html { redirect_to location_after_save }
+            format.js   { render :layout => false }
+          end
+        else
+          invoke_callbacks(:create, :fails)
+          redirect_to location_after_save
+        end
+      end
+
+      def notify_orders
+        @product = Spree::Product.find_by(slug: params[:product_id])
+
+        orders = Set.new
+
+        @product.variants_including_master.each do |variant|
+          if variant.digital?
+            orders.merge variant.line_items.joins(:order).map(&:order)
+          end
+        end
+
+        orders.each do |order|
+          order.line_items.each(&:create_digital_links)
+
+          OrderMailer.digital_downloads_ready(order).deliver
+        end
+
+        if orders.empty?
+          flash[:error] = "No orders of this product were found"
+        else
+          flash[:success] = "Emails sent"
+        end
+        redirect_to :back
+      end
 
       protected
 

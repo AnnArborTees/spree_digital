@@ -5,6 +5,12 @@
     <%= link_to raw(link.digital.attachment_file_name), digital_url(:host => Spree::Config.get(:site_url), :secret => link.secret) %> (<%= link.clicks_remaining %> Clicks Left)
   </li>
   <% end %>
+
+  <% if stream_link = item.line_item.stream_link %>
+  <li>
+    <%= link_to "VHX Stream", stream_link %>
+  </li>
+  <% end %>
 <% end %>
 
 <!-- enabled -->

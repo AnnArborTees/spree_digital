@@ -21,11 +21,9 @@ Spree::LineItem.class_eval do
     end
 
   rescue StandardError => e
-    Rails.logger.error "ERROR DURING STREAM LINK RETRIEVAL: #{e} #{e.message}\n#{e.backtrace.join("\n")}"
+    Rails.logger.error "ERROR DURING STREAM LINK RETRIEVAL: #{e.class} #{e.message}\n#{e.backtrace.join("\n")}"
     nil
   end
-  
-  private
   
   # TODO there is no reason to create the digital links until the order is complete
   # TODO: PMG - Shouldn't we only do this if the quantity changed?
@@ -39,6 +37,8 @@ Spree::LineItem.class_eval do
     end
     create_digital_links_for_variant(variant) unless variant.is_master
   end
+  
+  private
 
   def create_digital_links_for_variant(variant)
     variant.digitals.each do |digital|
