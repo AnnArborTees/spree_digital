@@ -36,9 +36,16 @@ module Spree
         end
 
         orders.each do |order|
-          order.line_items.each(&:create_digital_links)
+          begin
+            order.line_items.each(&:create_digital_links)
 
-          OrderMailer.digital_downloads_ready(order).deliver
+            if order.email.present?
+              OrderMailer.digital_downloads_ready(order).deliver
+            end
+          rescue Exception => e
+            Rails.logger.error "During digital notifications: #{e.class} #{e.message}"
+            Rails.logger.error "\n#{e.backtrace.split("\n")}\n==================================================================================="
+          end
         end
 
         if orders.empty?
