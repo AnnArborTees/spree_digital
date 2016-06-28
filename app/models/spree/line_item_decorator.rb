@@ -15,7 +15,7 @@ Spree::LineItem.class_eval do
     vhx(product.vhx_api_key) do |v|
       customers = Vhx::Customer.all(email: order.email, product: v.href(:products, variant.vhx_product_id))
       products  = customers.flat_map { |c| c.try(:products) || Vhx::Customer.retrieve(v.href :customers, c.id).try(:products) || [] }
-      product   = products.find { |p| p.id.to_i == variant.vhx_product_id.to_i }
+      product   = products.reverse_each.find { |p| p.id.to_i == variant.vhx_product_id.to_i }
 
       product.links.product_page if product
     end

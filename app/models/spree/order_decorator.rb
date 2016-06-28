@@ -1,6 +1,9 @@
 Spree::Order.class_eval do
   include Spree::VhxIntegration
-  state_machine.after_transition to: :complete, do: :create_vhx_customer
+
+  # NOTE hopefully this will be more reliable than the state machine event
+  after_save :create_vhx_customer, if: :just_completed?
+  # state_machine.after_transition to: :complete, do: :create_vhx_customer
 
   # all products are digital
   def digital?
@@ -23,6 +26,10 @@ Spree::Order.class_eval do
     digital_links.each do |digital_link|
       digital_link.reset!
     end
+  end
+
+  def just_completed?
+    completed_at_was.nil? && !completed_at.nil?
   end
 
   def create_vhx_customer
