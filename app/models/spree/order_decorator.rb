@@ -1,8 +1,7 @@
 Spree::Order.class_eval do
   include Spree::VhxIntegration
 
-  # NOTE hopefully this will be more reliable than the state machine event
-  after_save :create_vhx_customer, if: :just_completed?
+  # NOTE this is now done in #finalize! override
   # state_machine.after_transition to: :complete, do: :create_vhx_customer
 
   # all products are digital
@@ -30,6 +29,31 @@ Spree::Order.class_eval do
 
   def just_completed?
     completed_at_was.nil? && !completed_at.nil?
+  end
+
+  # Slightly modified copy paste from spree/spree for calling create_vhx_customer
+  def finalize!
+    # lock all adjustments (coupon promotions, etc.)
+    all_adjustments.each{|a| a.close}
+
+    # update payment and shipment(s) states, and save
+    updater.update_payment_state
+    shipments.each do |shipment|
+      shipment.update!(self)
+      shipment.finalize!
+    end
+
+    updater.update_shipment_state
+    save
+    updater.run_hooks
+
+    touch :completed_at
+
+    create_vhx_customer # <- The addition of this line is the only change to this function
+
+    deliver_order_confirmation_email unless confirmation_delivered?
+
+    consider_risk
   end
 
   def create_vhx_customer
