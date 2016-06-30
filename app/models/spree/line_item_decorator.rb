@@ -9,7 +9,6 @@ Spree::LineItem.class_eval do
   end
 
   def stream_link
-    return unless order.complete?
     return if variant.vhx_product_id.blank?
 
     vhx(product.vhx_api_key) do |v|
