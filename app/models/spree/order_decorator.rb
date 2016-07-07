@@ -63,6 +63,8 @@ Spree::Order.class_eval do
       vhx(line_item.product.vhx_api_key) do |v|
         if user.present? && user.vhx_customer_id.present?
           customer = Vhx::Customer.retrieve(v.href(:customers, user.vhx_customer_id))
+        else
+          customer = Vhx::Customer.all(email: email).first
         end
 
         product_href = v.href(:products, line_item.variant.vhx_product_id)
